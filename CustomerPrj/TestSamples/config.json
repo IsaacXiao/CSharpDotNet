@@ -1,0 +1,6 @@
+{
+  "id_max": 1000,
+  "sample_count": 10,
+  "full_score": 100,
+  "init_file": "../../../../samples.txt"
+}
