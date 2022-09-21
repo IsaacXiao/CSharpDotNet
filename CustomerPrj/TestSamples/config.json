@@ -1,6 +1,6 @@
 {
-  "id_max": 1000,
-  "sample_count": 10,
-  "full_score": 100,
-  "init_file": "../../../../samples.txt"
+  "id_max": 100,
+  "sample_count": 5,
+  "score_max": 1000,
+  "file_path": "../../../../samples.txt"
 }
