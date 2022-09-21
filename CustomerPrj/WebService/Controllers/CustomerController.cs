@@ -42,4 +42,3 @@ public class CustomerController: ControllerBase
         return GetCustomerByRank(start, end);
     }
 }
-

@@ -6,5 +6,3 @@ using Microsoft.Extensions.Configuration;
 
 TEST_SAMPLES.GenerateSamples();
 TEST_SAMPLES.ShowSamples();
-
-

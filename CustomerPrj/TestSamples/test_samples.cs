@@ -1,6 +1,4 @@
 ﻿using Microsoft.Extensions.Configuration;
-
-
 public static class TEST_SAMPLES
     {
     private static IConfigurationRoot config_;
