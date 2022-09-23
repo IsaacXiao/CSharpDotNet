@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <p>post requests for 10 times</p>
+    <p></p>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script>
+        let req = null;
+        try {
+            req = axios.create({
+                baseURL: 'https://127.0.0.1:7292',
+                timeout: 10000,
+                headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+            });
+        } catch (err) {
+            console.log(`错误：${err}`)
+        }
+
+        if (!req) {
+            console.log("axios实例不存在，请检查axios外链地址是否正确！")
+        } else {
+            let times = 10;
+            while (times > 0) {
+                req.post('/Customer/UpdateScore', {}, {
+                    params: {
+                        customer_id: times,
+                        score: times,
+                    }
+                })
+                times--
+            }
+        }
+
+    </script>
+</body>
+
+</html>

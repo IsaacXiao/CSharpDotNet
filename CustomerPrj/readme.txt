@@ -21,4 +21,10 @@ C#ÖÐµÄcollectionÄÚ´æ¹ÜÀí»úÖÆÎ´Öª£¬´æ´¢class¶ø·Çstruct»á·ñÓÐÄÚ´æËéÆ¬µÄÎÊÌâ²»µÃ¶øÖ
 CLR»úÖÆºÍ²Ù×÷ÏµÍ³»áºÜÖÇÄÜµØÎªÎÒÃÇÑ¡ÔñÊÇ·ñÐèÒª¿ª±ÙÐÂµÄÏß³ÌÀ´×öÒì²½²Ù×÷
 
 
+Êý¾Ý½á¹¹µÄÑ¡ÓÃ£¬Ê±¼ä¸´ÔÓ¶È¡¢Ïß³Ì°²È«ÈÝÆ÷£¨¼¯ºÏ£©.....
+
+
+
+¶ÔÓÚÐèÇó2ºÍÐèÇó3¶øÑÔ£¬´¦Àí·Ç·¨ÊäÈë²»ÂÛÊÇÓÃ¶ÏÑÔassert»¹ÊÇÒì³£exception
+¶¼¶ÔÓÃ»§²»ÓÑºÃ»òÕß¶ÔÇ°¶Ë¿ª·¢ÈËÔ±²»ÓÑºÃ£¬ÒÔActionResult·µ»Ø¸üºÏÊÊ
 
