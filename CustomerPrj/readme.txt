@@ -1,9 +1,8 @@
 
 
-注意生成的测试样本ID是随机的
-ID要是生成了重复的则重新运行程序即可
-靠代码处理麻烦：
-https://blog.csdn.net/cjolj/article/details/59486865
+注意生成的测试样本samples.txt没在代码里
+做数据合法性的处理
+需手动删掉负数ID或者重复的
 
 
 

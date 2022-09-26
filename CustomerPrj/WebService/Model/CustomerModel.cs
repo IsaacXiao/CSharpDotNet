@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Collections;
 using System.Collections.Concurrent;
 
+考虑不用线程安全容器
 using SortedRank = System.Collections.SortedList;
 using IndexedRankById = System.Collections.Concurrent.ConcurrentDictionary<long,int>;
 
@@ -11,8 +12,9 @@ using IndexedRankById = System.Collections.Concurrent.ConcurrentDictionary<long,
 //否则考虑让Controller持有Model，但是没必要做单例
 public static class CustomerModel
     {
-    private static SortedRank leaderboard_ = SortedList.Synchronized(new SortedList());
-    private static IndexedRankById indexed_rank_byid_ = new ConcurrentDictionary<long, int>();
+    private static SortedRank leaderboard_ = SortedRank.Synchronized(new SortedRank());
+    private static IndexedRankById indexed_rank_byid_ = new();
+    private static readonly object table_lock_ = new object();
     public static Tuple<int, int> RankRange() { return Tuple.Create<int, int>(1,leaderboard_.Count); }
     public static bool CustomerIdExsits(long id) { return indexed_rank_byid_.ContainsKey(id); }
     public static int RangeIndex(long id) { return indexed_rank_byid_[id]; }
@@ -37,28 +39,53 @@ public static class CustomerModel
                 }
             }
         }
-    public static async Task UpdateScore(long customer_id, decimal score)
+    public static async Task AddRecord(Rank rank)
         {
         await Task.Run
-            ( () =>
+            ( ( ) =>
                 {
-                Rank new_rank = new Rank(score, customer_id);
-                if (!CustomerIdExsits(customer_id))
+                lock(table_lock_)
                     {
-                    leaderboard_.Add(new_rank, null);
-                    indexed_rank_byid_.TryAdd(new_rank.customerId_, leaderboard_.IndexOfKey(new_rank) + 1);
-                    }
-                else
-                    {
-                    int old_index = indexed_rank_byid_[customer_id] - 1;
-                    leaderboard_.RemoveAt(old_index);
-                    leaderboard_.Add(new_rank, null);
-                    indexed_rank_byid_[customer_id] = leaderboard_.IndexOfKey(new_rank) + 1;
+                    leaderboard_.Add(rank, null);
+                    Debug.Assert(true == indexed_rank_byid_.TryAdd(rank.customerId_, leaderboard_.IndexOfKey(rank) + 1));
+                    //插入之后的[first,last)元素排名因为移动了位置，所以要在相应的索引表里更新
+                    int first = leaderboard_.IndexOfKey(rank) + 1;
+                    int last = leaderboard_.Count;
+                    while (first < last)
+                        {
+                        Rank migrated = (Rank)(leaderboard_.GetKey(first++));
+                        ++indexed_rank_byid_[migrated.customerId_];
+                        }
                     }
                 }
             );
         }
-    public static Task<List<Customer>> GetCustomerByRank(int start,int end)
+    public static async Task RemoveRecord(long customer_id)
+        {
+        await Task.Run
+            ( ( ) =>
+                {
+                lock(table_lock_)
+                    {
+                    int where = indexed_rank_byid_[customer_id] - 1;
+                    Rank rank = (Rank)(leaderboard_.GetKey(where));
+                    Debug.Assert(rank.customerId_==customer_id);
+                    leaderboard_.RemoveAt(where);
+                    //删除之后的[first,last)元素排名因为移动了位置，所以要在相应的索引表里更新
+                    int first = where;
+                    int last = leaderboard_.Count;
+                    while (first < last)
+                        {
+                        Rank migrated = (Rank)(leaderboard_.GetKey(first++));
+                        --indexed_rank_byid_[migrated.customerId_];
+                        }
+                    }
+                int which;
+                Debug.Assert(true == indexed_rank_byid_.TryRemove(customer_id,out which));
+                }
+            );
+        }
+    public static Task<List<Customer>> GetCustomerByRange(int start,int end)
         {
         List<Customer> outcome = new List<Customer>();
         for(int rank = start; rank <= end; rank++)

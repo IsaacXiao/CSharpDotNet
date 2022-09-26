@@ -9,16 +9,14 @@ public record Customer(long id, decimal score,long rank);
 //这些没必要做到文件里去配了
 public static class Config
     {
-    //比如可根据业务逻辑人为规定id和分数都要大于0
-    public const decimal INVALID_SCORE = -1;
+    public const decimal DEFAULT_SCORE = 0;
     public const long INVALID_CUSTOMERID = -1;
-    //避免在代码里出现写死了的字面常量，放在这里统一管理
     public const string TEST_FILE = "../samples.txt";
     }
 
 public record struct Rank : IComparable
     {
-    public decimal score_ = Config.INVALID_SCORE;
+    public decimal score_ = Config.DEFAULT_SCORE;
     public readonly long customerId_ { get; init; } = Config.INVALID_CUSTOMERID;
 
     public Rank(decimal score, long customer_id)
