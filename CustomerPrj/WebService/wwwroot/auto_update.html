@@ -9,7 +9,7 @@
 </head>
 
 <body>
-    <p>post requests for 10 times</p>
+    <p>post requests for several times</p>
     <p></p>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script>
@@ -17,7 +17,7 @@
         try {
             req = axios.create({
                 baseURL: 'https://127.0.0.1:7292',
-                timeout: 10000,
+                timeout: 100000,
                 headers: { 'Content-Type': 'application/json;charset=UTF-8' },
             });
         } catch (err) {
@@ -27,15 +27,17 @@
         if (!req) {
             console.log("axios实例不存在，请检查axios外链地址是否正确！")
         } else {
-            let times = 10;
+            let times = 100;
+			var flag = 1;
             while (times > 0) {
+				flag = -1*flag;
                 req.post('/Customer/UpdateScore', {}, {
                     params: {
                         customer_id: times,
-                        score: times,
+                        score: Math.round(Math.random()*100)*flag,
                     }
                 })
-                times--
+                times--;
             }
         }
 
