@@ -16,6 +16,7 @@ public static class TEST_SAMPLES
         score_max_ = long.Parse(config_["score_max"]);
         }
 
+    //生成随机数写到测试样本文件里去
     public static void GenerateSamples()
         {
         ReadConfigInfo();
@@ -24,12 +25,13 @@ public static class TEST_SAMPLES
             for (long i = 0; i < sample_count_; i++)
                 {
                 Random factor = new Random();
-                    
                 generator.WriteLine("{0}\t{1}", factor.NextInt64(1, id_max_), 
-                    (decimal)(factor.NextInt64(1,1000)));
+                                                (decimal)(factor.NextInt64(1,1000)));
                 }
             }
         }
+
+    //把测试样本文件的数据读到控制台
     public static void ShowSamples()
         {
         Console.WriteLine("Init some data to do test\n初始化一点点数据便于测试");

@@ -1,7 +1,7 @@
 
-var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
-
 var builder = WebApplication.CreateBuilder(args);
+
+//为了运行测试JS添加了一点让服务器端能支持CORS的代码
 
 string[] urls = new[] { "http://localhost:7292", "https://localhost:7292" };
 
