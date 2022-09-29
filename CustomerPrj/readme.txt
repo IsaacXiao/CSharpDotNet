@@ -7,8 +7,7 @@ TestSamples项目是用于生成一点初始样本数据的，便于测试和调试
 
 WebService项目才是用于答题的
 目录下wwwroot/auto_update.html是用来模拟需求1发送POST请求的
-需如此打开https://localhost:7292/auto_update.html(折腾了好久设置跨域CORS权限才搞定)
-里面的js代码是网上找的
+需如此打开https://localhost:7292/auto_update.html
 
 
 关于数据结构的选用见jpg图
@@ -26,12 +25,12 @@ CLR机制会结合操作系统很“智能”地为我们选择是否需要开辟新的线程
 没有声明为Async的函数有可能被多线程并发执行
 用Async声明了的函数有可能是用主线程同步执行
 需求1是写操作，不论是否做成Async都必须串行执行
-需求2和需求3是读操作，在没有线程写的时候可以并发地同时读
-所以这里是用读写锁来区分对待
+需求2和需求3是读操作，在没有线程写的时候可以并发地同时读所以这里是用读写锁来区分对待
 
 
 关于URL定位请求
 命名没有完全照pdf的是为了方便测试和调试，运行成熟没问题再改名即可
+
 不用VS自带的swagger直接在浏览器如此更方便：
 https://localhost:7292/Customer/GetAll 			（把Rank表SortedList显示出来，浏览器开标签页显示比断点调试更直观）
 https://localhost:7292/Customer/IndexedRank	（把Index表Dictionary显示出来，浏览器开标签页显示比断点调试更直观）
