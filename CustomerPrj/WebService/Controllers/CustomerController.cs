@@ -10,6 +10,8 @@ using System;
 
 [Route("[controller]/[action]")]
 [ApiController]
+//这个类在处理非法输入数据时不是抛异常而是返回NotFound
+//这样对做前端开发的同事和用户而言都更加友好
 public class CustomerController: ControllerBase
     {
     //用于测试和调试html表单手动提交（不用vs自带的swagger）
@@ -20,7 +22,6 @@ public class CustomerController: ControllerBase
         }
 
     //用于测试和调试（不用vs自带的swagger）
-    //把所有Rank及相关记录全部显示出来，便于与需求2和需求3的执行结果比对
     //浏览器开标签页https://localhost:7292/Customer/GetAll比断点调试更直观
     [HttpGet]
     public async Task<List<Customer>> GetAll()
@@ -30,7 +31,6 @@ public class CustomerController: ControllerBase
         }
 
     //用于测试和调试（不用vs自带的swagger）
-    //把所有建了索引Index的Rank全部显示出来，便于与需求2和需求3的执行结果比对
     //浏览器开标签页https://localhost:7292/Customer/IndexedRank比断点调试更直观
     [HttpGet]
     public IEnumerable<IndexedRank> IndexedRank()
@@ -42,18 +42,20 @@ public class CustomerController: ControllerBase
     [HttpPost]
     public IActionResult UpdateScore(long customer_id, decimal score)
         {
-        //对做前端开发的同事和用户而言
-        //用NotFound返回非法参数传入的信息要比抛异常更友好
         if (customer_id <= Config.INVALID_CUSTOMERID || score < Config.SCORE_DECREASE || Config.SCORE_INCREASE < score)
             return NotFound("id should be positive and score should be in range of [-1000, +1000]");
- 
-        if(!CustomerModel.CustomerIdExsits(customer_id))
+
+        if(false==CustomerModel.CustomerIdExsits(customer_id))
             {
             CustomerModel.AddRecord(new Rank(score, customer_id));
             return Ok(score);
             }
         else
             {
+            //这里有个可以考虑优化的地方
+            //更新Score有可能不会导致排名发生变化
+            //比如 [ 1, 10, 100 ] 这3个数字把10更新为11不会导致前后排名变化
+            //写起来有点麻烦，纯粹为做题就免了
             decimal old_score = CustomerModel.RemoveRecord(customer_id);
             CustomerModel.AddRecord(new Rank(old_score+score, customer_id));
             return Ok(old_score+score);
@@ -64,17 +66,13 @@ public class CustomerController: ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetCustomerByRank(int start,int end)
         {
-        //对做前端开发的同事和用户而言
-        //用NotFound返回非法参数传入的信息要比抛异常更友好
         if (start<CustomerModel.RankRange().lower_bound || !(start<=end) || CustomerModel.RankRange().upper_bound<end)
             {
             return NotFound("invalid input range\t输入的区间越界");
             }
         else
             {
-            Console.WriteLine("Before Query-ThreadId = " + Thread.CurrentThread.ManagedThreadId);
             var res = await CustomerModel.GetCustomerByRange(start, end);
-            Console.WriteLine("After Query-ThreadId = " + Thread.CurrentThread.ManagedThreadId);
             return Ok(res);
             }
         }
@@ -83,11 +81,9 @@ public class CustomerController: ControllerBase
     [HttpGet]
     //测试通过2个都默认为0的情况、high为0的情况，low为0的情况
     //以及high为负数的情况、low为负数的情况
-    public async Task<IActionResult> GetCustomerById(int customer_id, int high=0, int low=0)
+    public async Task<IActionResult> GetCustomerById(long customer_id, int high=0, int low=0)
         {
-        //对做前端开发的同事和用户而言
-        //用NotFound返回非法参数传入的信息要比抛异常更友好
-        if(!CustomerModel.CustomerIdExsits(customer_id))
+        if(false==CustomerModel.CustomerIdExsits(customer_id))
             { 
             return NotFound("invalid input id or range\t输入的id有误");
             }

@@ -1,7 +1,7 @@
 
 var builder = WebApplication.CreateBuilder(args);
 
-//为了运行测试JS添加了一点让服务器端能支持CORS的代码
+//为了运行测试JS添加了一点设置服务器端能支持CORS的代码
 
 string[] urls = new[] { "http://localhost:7292", "https://localhost:7292" };
 
@@ -33,7 +33,7 @@ app.UseStaticFiles();   //
 app.UseAuthorization();
 app.MapControllers();
 
-
+//若不需要初始样本数据就把这行注释掉
 CustomerModel.InitTestSamples();
 
 app.Run();
