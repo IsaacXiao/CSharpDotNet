@@ -7,16 +7,24 @@ using System.Diagnostics;
 public static class Config
     {
     public const decimal DEFAULT_SCORE = 0;
+<<<<<<< HEAD
     //题目规定的id必须是正数，则判断小于INVALID_CUSTOMERID都是非法参数
     public const long INVALID_CUSTOMERID = 0;
     //题目规定的update范围为[-1000,1000]
+=======
+    public const long INVALID_CUSTOMERID = 0;
+>>>>>>> 09ac0e11c2e9a7425ca148a1f8614d1a3e8745fc
     public const decimal SCORE_DECREASE = -1000;
     public const decimal SCORE_INCREASE = 1000;
     //为了提高效率避免SortedList动态扩容，可以分配给leaderboard一个较大的初始容量
     public const int LEADERBOARD_SIZE = 2000;
+<<<<<<< HEAD
 
     public const string TEST_FILE = "../samples.txt";
     //读写锁设置的等待超时
+=======
+    public const string TEST_FILE = "../samples.txt";
+>>>>>>> 09ac0e11c2e9a7425ca148a1f8614d1a3e8745fc
     public const int LOCK_TIMEOUT = 250;
     }
 
@@ -26,6 +34,7 @@ public record RankBoundary(int lower_bound, int upper_bound);
 public record IndexedRank(long id,int rank);
 
 
+<<<<<<< HEAD
 
 //C#的struct实例是分配在栈上class实例是分配在堆空间中的
 //因为操作系统要为分配的每个堆内存记录信息（俗称“收税”）
@@ -34,8 +43,17 @@ public record IndexedRank(long id,int rank);
 //关于这个可以参见操作系统原理
 //就像C++的容器在语义上是按值存储一样
 public struct Rank : IComparable
+=======
+//C#的struct实例是分配在栈上class实例是分配在堆空间中的
+//因为操作系统要为分配的每个堆内存记录信息（俗称“收税”）
+//用collection存储大量class实例可能会导致内存性能效率低下或是内存碎片问题
+//所以Rank在此声明为struct而非class!!!!
+//关于这个可以参见操作系统原理
+//就像C++的容器在语义上是按值存储一样
+public struct Rank : IComparable<Rank>
+>>>>>>> 09ac0e11c2e9a7425ca148a1f8614d1a3e8745fc
     {
-    public decimal score_ = Config.DEFAULT_SCORE;
+    public readonly decimal score_ { get; init; } = Config.DEFAULT_SCORE;
     public readonly long customerId_ { get; init; } = Config.INVALID_CUSTOMERID;
 
     public Rank(decimal score, long customer_id)
@@ -44,16 +62,21 @@ public struct Rank : IComparable
         customerId_ = customer_id;
         }
 
-    public int CompareTo(object obj)
+    public int CompareTo(Rank other_record)
         {
+<<<<<<< HEAD
         //被断言断到就当是中奖了，编译器的警告就装作没看见
         //TODO: 今后有时间把SortedList改为泛型版本的SortedList以消除装箱和拆箱
         Debug.Assert(null != obj);
         Rank other_record = (Rank)obj;
 
+=======
+>>>>>>> 09ac0e11c2e9a7425ca148a1f8614d1a3e8745fc
         if (this.score_ == other_record.score_)
             return this.customerId_.CompareTo(other_record.customerId_);
         else
             return other_record.score_.CompareTo(this.score_);
         }
     }
+
+public struct Placeholder { }
