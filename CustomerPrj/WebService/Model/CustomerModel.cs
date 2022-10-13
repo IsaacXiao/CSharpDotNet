@@ -4,17 +4,11 @@ using System.Diagnostics;
 using System.Collections.Generic;
 using System.Threading;
 
-//因为C#没有泛型的SortedList<T>，只能写成SortedList<Rank,无意义的模板参数>
-//尝试过非泛型版本的SortedList，发现C#有装箱和拆箱的开销（根本不同于C/C++里的强制类型转换）
-//如果嫌这个Placeholder影响代码的美观
-//也可通过继承List<T>或包含List<T>来做成Sorted，stackoverflow有此讨论和实现
-//参见https://stackoverflow.com/questions/3663613/why-is-there-no-sortedlistt-in-net
+
 using SortedRank = System.Collections.Generic.SortedList<Rank,Placeholder?>;
 using IndexedRankById = System.Collections.Generic.Dictionary<long,int>;
 
-//C#没法像C++一样写全局函数
-//为了在Main.cs中调用InitTestSamples()所以把这个类做成static
-//否则可以让Controller持有Model，有没必要做单例视业务逻辑来
+
 public static class CustomerModel
     {
     private static SortedRank leaderboard_ = new (Config.LEADERBOARD_SIZE);
@@ -31,14 +25,12 @@ public static class CustomerModel
 
     public static void InitTestSamples()
         {
-        Console.WriteLine("Init some data to do test, see samples.txt\n初始化一点点数据便于测试，见samples.txt");
-        Console.WriteLine("the initial size of leaderboard 初始化的排名表大小为: {0}", leaderboard_.Capacity);
+        Console.WriteLine("Init some data to do test, see samples.txt\n，samples.txt");
+        Console.WriteLine("the initial size of leaderboard: {0}", leaderboard_.Capacity);
         using (StreamReader customer = new StreamReader(Config.TEST_FILE))
             {
             while (!customer.EndOfStream)
                 {
-                //只要测试样本的txt文件别删掉、别乱改它
-                //编译器的警告就装作没看见，被断言断到就当是中奖了
                 Debug.Assert(System.IO.File.Exists(Config.TEST_FILE));
                 string[] item = customer.ReadLine().Split('\t');
                 long customer_id = long.Parse(item[0]);
@@ -66,7 +58,8 @@ public static class CustomerModel
             leaderboard_.Add(rank, null);
             Debug.Assert(true == indexed_rank_byid_.TryAdd(rank.customerId_, leaderboard_.IndexOfKey(rank) + 1));
 
-            //Add之后的 [ first, last ) 元素排名因为移动了位置，所以要在相应的索引表里更新
+            //after Add, elements ranks in range [ first, last ) are increased subsequently
+            //so they should be updated in time in Index table
             int first = leaderboard_.IndexOfKey(rank) + 1;
             int last = leaderboard_.Count;
             while (first < last)
@@ -87,7 +80,8 @@ public static class CustomerModel
             Debug.Assert(rank.customerId_==customer_id);
             Debug.Assert(true == indexed_rank_byid_.Remove(customer_id));
 
-            //Remove之后的 [ first,last ) 元素排名因为移动了位置，所以要在相应的索引表里更新
+            //after Remove, elements ranks in range [ first, last ) are decreased subsequently
+            //so they should be updated in time in Index table
             int first = where;
             int last = leaderboard_.Count;
             while (first < last)

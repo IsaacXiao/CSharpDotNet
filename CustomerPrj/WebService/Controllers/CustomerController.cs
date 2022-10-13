@@ -11,19 +11,21 @@ using System;
 
 [Route("[controller]/[action]")]
 [ApiController]
-//这个类在处理非法输入数据时不是抛异常而是返回NotFound
-//这样对做前端开发的同事和用户而言都更加友好
+//for invalid parameter inputs
+//I don't throw exception
+//because returning NotFound is more user friendly 
 public class CustomerController: ControllerBase
     {
-    //用于测试和调试html表单手动提交（不用vs自带的swagger）
+    //this function is merely for test
     [HttpPut]
     public void UpdateScore(long customer_id, decimal score,bool test = true)
         {
         Console.WriteLine("{0}\t{1}", customer_id, score);
         }
 
-    //用于测试和调试（不用vs自带的swagger）
-    //浏览器开标签页https://localhost:7292/Customer/GetAll比断点调试更直观
+    //It's more convenient to view Rank table from browser ( visualize it ) instead of breakpoint debugging
+    //this function is for:
+    //https://localhost:7292/Customer/GetAll
     [HttpGet]
     public async Task<List<Customer>> GetAll()
         {
@@ -31,15 +33,16 @@ public class CustomerController: ControllerBase
                                                                                         CustomerModel.RankRange().upper_bound);
         }
 
-    //用于测试和调试（不用vs自带的swagger）
-    //浏览器开标签页https://localhost:7292/Customer/IndexedRank比断点调试更直观
+    //It's more convenient to view Index table from browser ( visualize it ) instead of breakpoint debugging
+    //this function is for:
+    //https://localhost:7292/Customer/IndexedRank
     [HttpGet]
     public IEnumerable<IndexedRank> IndexedRank()
         {
         return CustomerModel.GetIndexedRank();
         }
 
-    //需求1
+    //Requirement 1
     [HttpPost]
     public IActionResult UpdateScore(long customer_id, decimal score)
         {
@@ -53,23 +56,26 @@ public class CustomerController: ControllerBase
             }
         else
             {
-            //这里有个可以考虑优化的地方
-            //更新Score有可能不会导致排名发生变化
-            //比如 [ 1, 10, 100 ] 这3个数字把10更新为11不会导致前后排名变化
-            //写起来有点麻烦，纯粹为做题就免了
+            //here is a point we could consider to optimize
+            //there is possibility that updating score won't change ranks
+            //for example, let's say there is a  SortedList with 3 numbers [ 1, 10, 100 ]
+            //updating the number 10 to 11 won't disrupt its sorted order
+            //as for merely doing a homework
+            //it's not necessary to implement this secondary logic
+            //because it will increase its complexity and downgrade code readability
             decimal old_score = CustomerModel.RemoveRecord(customer_id);
             CustomerModel.AddRecord(new Rank(old_score+score, customer_id));
             return Ok(old_score+score);
             }
         }
 
-    //需求2
+    //Requirement 2
     [HttpGet]
     public async Task<IActionResult> GetCustomerByRank(int start,int end)
         {
         if (start<CustomerModel.RankRange().lower_bound || !(start<=end) || CustomerModel.RankRange().upper_bound<end)
             {
-            return NotFound("invalid input range\t输入的区间越界");
+            return NotFound("invalid input range\t");
             }
         else
             {
@@ -78,15 +84,13 @@ public class CustomerController: ControllerBase
             }
         }
 
-    //需求3
+    //Requirement 3
     [HttpGet]
-    //测试通过2个都默认为0的情况、high为0的情况，low为0的情况
-    //以及high为负数的情况、low为负数的情况
     public async Task<IActionResult> GetCustomerById(long customer_id, int high=0, int low=0)
         {
         if(false==CustomerModel.CustomerIdExsits(customer_id))
             { 
-            return NotFound("invalid input id or range\t输入的id有误");
+            return NotFound("invalid input id");
             }
         else
             {

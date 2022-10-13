@@ -16,7 +16,6 @@ public static class TEST_SAMPLES
         score_max_ = long.Parse(config_["score_max"]);
         }
 
-    //生成随机数写到测试样本文件里去
     public static void GenerateSamples()
         {
         ReadConfigInfo();
@@ -31,10 +30,9 @@ public static class TEST_SAMPLES
             }
         }
 
-    //把测试样本文件的数据读到控制台
     public static void ShowSamples()
         {
-        Console.WriteLine("Init some data to do test\n初始化一点点数据便于测试");
+        Console.WriteLine("Init some data to do test\n");
         using (StreamReader customer = new StreamReader(config_["file_path"]))
             {
             while (!customer.EndOfStream)
