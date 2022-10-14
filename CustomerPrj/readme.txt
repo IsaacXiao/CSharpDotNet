@@ -20,23 +20,23 @@ Cpu not only caches data but also instructions to do frequent operations ( Nonfu
 ( See also https://youtu.be/WDIkqP4JbkE )
 Accessing and manipulating cpu cached data is extremely faster than SortedDictionary which is built on binary search tree.
 As for the disadvantage of SortedList, we can proactively initialize a very huge capacity to avoid runtime expansion.
-c# doesn't have generic version of SortedList<T>, so I have to write SortedList<Rank,meaningless template parameter>
-without Placeholder, an alternative way is non-generic version of SortedList storing a bunch of "object"
-unlike type cast or convert in c++, boxing and and unboxing objects in c# are costly    
-another choice SortedList<id_, score> is not feasible either,
-because the field "score" is not able to participate ( the key is id !! ) comparison as our business logic defined in PDF:
+c# doesn't have generic version of SortedList<T>, so I have to write SortedList<Rank,meaningless template parameter>.
+Without Placeholder, an alternative way is non-generic version of SortedList storing a bunch of "object".
+Unlike type cast or convert in c++, boxing and and unboxing objects in c# are costly.    
+Another choice SortedList<id_, score> is not feasible either,
+because the field "score" is not able to participate ( id is comparable key !! ) comparison as our business logic defined in PDF:
 Two customers with the same score, their ranks are determined by their CustomerID, lower is first.
-the perfect solution is to implement SortedList<T> by inheritance from List<T>, as the link below describes,
+The perfect solution is to implement SortedList<T> by inheritance from List<T>, as the stackoverflow link below describes,
 https://stackoverflow.com/questions/3663613/why-is-there-no-sortedlistt-in-net
-we can manually make it sorted, but it will increase complexity
+we can manually make it sorted, but it will increase complexity.
 
 
-As for Rank, I declared it as struct instead of class
-struct in C# is allocated on stack and class is built up from heap space
-in order to keep track of heap memory given to apps
-OS maintains a double linked list like stuff to record informations
-I would call this extra overhead like a taxes collector
-storing too many class objects in collection could cause memory inefficiency and memory fragments
+As for Rank, I declared it as struct instead of class,
+struct in C# is allocated on stack and class is built up from heap space,
+in order to keep track of heap memory given to apps,
+OS maintains a double linked list like stuff to record informations,
+I would call this extra overhead like a taxes collector,
+storing too many class objects in collection could cause memory inefficiency and memory fragments.
 
 
 As for simultaneous requests
@@ -55,9 +55,9 @@ https://localhost:7292/Customer/GetCustomerById?customer_id=2&high=1&low=2
 
 
 My coding style and specification are mostly from 3 technical books
-1.¡¶Code Complete 2¡·: how to downgrade complexity in programming
-2.¡¶Refactoring: Improving the Design of Existing Code¡·: how to dispel code smell and make it neat
-3.¡¶Programming Pearls¡·: making good use of assertion to write robust code
+1. <Code Complete 2>: how to downgrade complexity in programming
+2. <Refactoring: Improving the Design of Existing Code>: how to dispel code smell and make it neat
+3. <Programming Pearls>: making good use of assertion to write robust code
 In addtion to these 3 points above,
 if there is any other thing out of my consideration,
 please let me know, I would appreciate your comments and advices.
